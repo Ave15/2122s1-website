@@ -1,6 +1,7 @@
 import { DEFAULTS, hideDom, showDom, makeNowFrom } from '../commons.mjs';
 import { createColumnChart, drawGoogleChart } from './google-charts.mjs';
-import getErrorChartPayload from './connector.mjs';
+import {getErrorChartPayload, getArrivalsChartPayload }  from './connector.mjs';
+
 
 /**
  *
@@ -93,6 +94,15 @@ function makeErrorChartPayloadToTimestampBuckets(payload, fromDayJs, toDayJs) {
     );
 }
 
+function makeArrivalsChartPayloadToTimestampBuckets(payload, fromDayJs, toDayJs) {
+    return makeTimestampBuckets(
+        // See .map: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+        payload,
+        fromDayJs,
+        toDayJs,
+    );
+}
+
 const hideWarningIcon = hideDom;
 const showWarningIcon = showDom;
 const hideLoadingAnimation = hideDom;
@@ -109,6 +119,17 @@ export const charts = {
         draw: drawGoogleChart,
         payloadToData: makeErrorChartPayloadToTimestampBuckets,
         getPayload: getErrorChartPayload,
+    },
+    'Arrival-rate': {
+        options: {
+            ...DEFAULTS.graphOptions,
+            title: 'Arrivals/sec',
+            colors: ['red'],
+        },
+        createChart: createColumnChart,
+        draw: drawGoogleChart,
+        payloadToData: makeArrivalsChartPayloadToTimestampBuckets,
+        getPayload: getArrivalsChartPayload,
     },
 };
 
@@ -169,3 +190,7 @@ export function initialize(plugins) {
         plugin(chartIds, charts);
     });
 }
+
+
+
+    
